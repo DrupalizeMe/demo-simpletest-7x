@@ -18,6 +18,15 @@ function helloworld_menu() {
     'menu' => 'navigation',
   );
 
+  $items['helloworld/form'] = array(
+    'title' => 'Example Form',
+    'access callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('helloworld_cake_form'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'helloworld.form.inc',
+  );
+
   return $items;
 }
 

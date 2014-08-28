@@ -55,6 +55,40 @@ class HelloworldTests extends DrupalWebTestCase {
     $this->assertUrl('user/register');
   }
 
+
+  public function testForms() {
+    $this->drupalGet('helloworld/form');
+
+    $this->assertFieldByXpath("//form[@id='helloworld-cake-form']//input[@name='name']", '', 'The name field is present.');
+    $this->assertFieldByName('choice', 'cake', 'The choice field is present.');
+
+    $data = array(
+      'name' => '',
+      'choice' => 'chicken',
+    );
+    $this->drupalPost('helloworld/form', $data, 'Submit');
+    $this->assertText('Your name field is required.', 'Name field is required.');
+
+    $data = array(
+      'name' => 'Joe',
+      'choice' => 'cake',
+    );
+
+    $this->drupalPost('helloworld/form', $data, 'Submit');
+    $this->assertText("We're out of cake!", 'Cake error is displayed when cake is selected.');
+
+    $this->drupalPost('helloworld/form', $data, 'Equivocate');
+    $this->assertText('Make up your mind!', 'Equivocate button works.');
+
+    $data = array(
+      'name' => 'Joe',
+      'choice' => 'chicken',
+    );
+    $this->drupalPost('helloworld/form', $data, 'Submit');
+    $this->assertText('Joe, you chose chicken', 'Form works with valid data.');
+
+  }
+
 }
 
 
