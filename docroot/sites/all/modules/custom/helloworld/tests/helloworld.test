@@ -36,13 +36,23 @@ class HelloworldTests extends DrupalWebTestCase {
 
     $first = 1;
     $second = '1';
-    $this->assertIdentical($first, $second, 'The variables are identical.');
+    // $this->assertIdentical($first, $second, 'The variables are identical.');
 
     $this->assertNoText('Tacos', 'Tacos is not found.');
 
-    $this->assertRaw('<p>', 'There is a p tag.');
+    // $this->assertRaw('<p>', 'There is a p tag.');
 
     $this->assertFieldByName('name', '', 'The username field is present.');
+  }
+
+  public function testNavigation() {
+    // http://example.com/helloworld
+    $this->drupalGet('helloworld');
+    $this->assertResponse(200, 'The page is available.');
+
+    $this->clickLink('Create new account');
+    // example.com/user/register.
+    $this->assertUrl('user/register');
   }
 
 }
