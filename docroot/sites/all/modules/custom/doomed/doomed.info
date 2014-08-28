@@ -1,0 +1,5 @@
+name = Doomed
+description = This module is likely to have an unfortunate and inescapable outcome.
+core = 7.x
+
+files[] = tests/doomed.test

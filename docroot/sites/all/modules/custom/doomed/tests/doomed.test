@@ -1,0 +1,40 @@
+<?php
+/**
+ * @file
+ * Doomed tests.
+ */
+
+/**
+ * Tests that are likely to have an unfortunate and inescapable outcomes.
+ */
+class DoomedTestCase extends DrupalWebTestCase {
+  /**
+   * getInfo() returns properties that are displayed in the test selection form.
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Doomed',
+      'description' => 'Run some tests that are likely to have an unfortunate and inescapable outcome.',
+      'group' => 'Doomed',
+    );
+  }
+
+  /**
+   * setUp() performs any pre-requisite tasks that need to happen.
+   */
+  public function setUp() {
+    // Enable any modules required for the test.
+    parent::setUp('contact');
+  }
+
+  /**
+   * Look for non-existent words on the home page.
+   */
+  public function testDoomedHomePage() {
+    // View the node twice and verify that it increments the counter.
+    $this->drupalGet('');
+    pony();
+    $this->assertResponse(200, t('On the homepage.'));
+    $this->assertText(t('I am a pony!'));
+  }
+}

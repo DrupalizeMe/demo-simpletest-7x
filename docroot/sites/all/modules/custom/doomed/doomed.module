@@ -1,0 +1,9 @@
+<?php
+/**
+ * @file
+ * This module is likely to have an unfortunate and inescapable outcome and is
+ * designed to fail tests in order to demonstrate what it looks like to have a
+ * test fail in the UI or any other test runner.
+ */
+
+// There's nothing needed here. See doomed.test
