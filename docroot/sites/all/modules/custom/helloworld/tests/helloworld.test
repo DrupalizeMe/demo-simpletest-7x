@@ -6,6 +6,8 @@
 
 class HelloworldTests extends DrupalWebTestCase {
 
+  private $admin_user;
+
   /**
    * Metadata about our test case.
    */
@@ -22,9 +24,12 @@ class HelloworldTests extends DrupalWebTestCase {
    */
   public function setUp() {
     parent::setUp(array('helloworld'));
+
+    // Create users for running tests.
+    $this->admin_user = $this->drupalCreateUser(array('administer site configuration'));
   }
 
-  public function testHelloWorld() {
+  public function _testHelloWorld() {
     $this->drupalGet('helloworld');
     $this->assertText('Hello World. Welcome to Drupal.', 'The page content is present.');
 
@@ -45,7 +50,7 @@ class HelloworldTests extends DrupalWebTestCase {
     $this->assertFieldByName('name', '', 'The username field is present.');
   }
 
-  public function testNavigation() {
+  public function _testNavigation() {
     // http://example.com/helloworld
     $this->drupalGet('helloworld');
     $this->assertResponse(200, 'The page is available.');
@@ -56,7 +61,7 @@ class HelloworldTests extends DrupalWebTestCase {
   }
 
 
-  public function testForms() {
+  public function _testForms() {
     $this->drupalGet('helloworld/form');
 
     $this->assertFieldByXpath("//form[@id='helloworld-cake-form']//input[@name='name']", '', 'The name field is present.');
@@ -87,6 +92,22 @@ class HelloworldTests extends DrupalWebTestCase {
     $this->drupalPost('helloworld/form', $data, 'Submit');
     $this->assertText('Joe, you chose chicken', 'Form works with valid data.');
 
+  }
+
+
+  function testAuthorization() {
+    $this->drupalLogin($this->admin_user);
+
+    $this->drupalGet('admin/config/system/site-information');
+
+    $data = array(
+      'site_name' => 'Testing Site Name',
+    );
+    $this->drupalPost('admin/config/system/site-information', $data, 'Save configuration');
+
+    $this->assertTitle('Site information | Testing Site Name');
+
+    $this->drupalLogout();
   }
 
 }
