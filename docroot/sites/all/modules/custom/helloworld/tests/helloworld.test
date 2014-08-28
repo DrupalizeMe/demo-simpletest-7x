@@ -27,6 +27,22 @@ class HelloworldTests extends DrupalWebTestCase {
   public function testHelloWorld() {
     $this->drupalGet('helloworld');
     $this->assertText('Hello World. Welcome to Drupal.', 'The page content is present.');
+
+    $variable = FALSE;
+    $this->assertFalse($variable, 'The value is false.');
+
+    $first = $second = 'rainbows';
+    $this->assertEqual($first, $second, 'The two variables are equal.');
+
+    $first = 1;
+    $second = '1';
+    $this->assertIdentical($first, $second, 'The variables are identical.');
+
+    $this->assertNoText('Tacos', 'Tacos is not found.');
+
+    $this->assertRaw('<p>', 'There is a p tag.');
+
+    $this->assertFieldByName('name', '', 'The username field is present.');
   }
 
 }
