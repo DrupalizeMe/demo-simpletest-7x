@@ -30,7 +30,7 @@ class HelloworldTests extends DrupalWebTestCase {
     $this->refreshVariables();
 
     // Create users for running tests.
-    $this->admin_user = $this->drupalCreateUser(array('administer site configuration', 'access content', 'view post access counter'));
+    $this->admin_user = $this->drupalCreateUser(array('create article content', 'administer site configuration', 'access content', 'view post access counter'));
   }
 
   public function _testHelloWorld() {
@@ -115,7 +115,7 @@ class HelloworldTests extends DrupalWebTestCase {
     $this->drupalLogout();
   }
 
-  function testCreateContent() {
+  function _testCreateContent() {
     $this->drupalLogin($this->admin_user);
 
     $title = $this->randomName();
@@ -142,6 +142,28 @@ class HelloworldTests extends DrupalWebTestCase {
 
     $this->drupalGet('node/' . $node->nid);
     $this->assertText('2 reads', 'Stats module shows 2 reads.');
+  }
+
+  function testFileUploads() {
+    $this->drupalLogin($this->admin_user);
+
+    $images = $this->drupalGetTestFiles('image');
+    // $this->verbose(print_r($images, TRUE));
+    $image_realpath = drupal_realpath($images[0]->uri);
+
+    $edit = array(
+      'title' => 'Test Article With Image',
+      'files[field_image_und_0]' => $image_realpath,
+    );
+
+    $this->drupalPostAJAX('node/add/article', $edit, 'field_image_und_0_upload_button');
+
+    $this->assertFieldByName('field_image[und][0][alt]', NULL, 'Alt field is visible.');
+
+    $this->drupalPost(NULL, array('title' => 'Testing AJAX'), t('Save'));
+
+    $custom_file = drupal_get_path('module', 'helloworld') . '/tests/test.csv';
+    $realpath = drupal_realpath($custom_file);
   }
 
 }
