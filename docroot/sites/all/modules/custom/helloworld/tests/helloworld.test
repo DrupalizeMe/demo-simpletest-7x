@@ -23,10 +23,14 @@ class HelloworldTests extends DrupalWebTestCase {
    * Perform any setup tasks for our test case.
    */
   public function setUp() {
-    parent::setUp(array('helloworld'));
+    parent::setUp(array('helloworld', 'statistics'));
+
+    variable_set('statistics_enable_access_log', 1);
+    variable_set('statistics_count_content_views', 1);
+    $this->refreshVariables();
 
     // Create users for running tests.
-    $this->admin_user = $this->drupalCreateUser(array('administer site configuration'));
+    $this->admin_user = $this->drupalCreateUser(array('administer site configuration', 'access content', 'view post access counter'));
   }
 
   public function _testHelloWorld() {
@@ -95,19 +99,49 @@ class HelloworldTests extends DrupalWebTestCase {
   }
 
 
-  function testAuthorization() {
+  function _testAuthorization() {
     $this->drupalLogin($this->admin_user);
 
     $this->drupalGet('admin/config/system/site-information');
 
+    $site_name = $this->randomString(10);
     $data = array(
-      'site_name' => 'Testing Site Name',
+      'site_name' => $site_name,
     );
     $this->drupalPost('admin/config/system/site-information', $data, 'Save configuration');
 
-    $this->assertTitle('Site information | Testing Site Name');
+    $this->assertTitle('Site information | ' . $site_name);
 
     $this->drupalLogout();
+  }
+
+  function testCreateContent() {
+    $this->drupalLogin($this->admin_user);
+
+    $title = $this->randomName();
+    $settings = array(
+      'type' => 'page',
+      'promote' => 1,
+      'title' => $title,
+      // body[und][0][value]
+      // body[und][0][format]
+      'body' => array(LANGUAGE_NONE => array(
+        array(
+          'value' => 'Copy goes here',
+          'format' => filter_default_format(),
+        ),
+      )),
+    );
+    $node = $this->drupalCreateNode($settings);
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertText($title, 'Node title was found.');
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertText('1 read', 'Stats module shows 1 read.');
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertText('2 reads', 'Stats module shows 2 reads.');
   }
 
 }
