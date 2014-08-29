@@ -168,7 +168,25 @@ class HelloworldTests extends DrupalWebTestCase {
 
 }
 
+class HellowordCloneTests extends DrupalCloneTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Hello World Clone',
+      'description' => 'Tests that run against a clone of our site instead of a fresh install.',
+      'group' => 'Hello World Group',
+    );
+  }
 
+  public function setUp() {
+    parent::setUp();
+  }
+
+  public function testAboutPage() {
+    $this->drupalGet('about');
+    $this->assertResponse(200, 'The about page exists.');
+    $this->assertText('This is the about page.', 'The about page text is correct.');
+  }
+}
 
 
 

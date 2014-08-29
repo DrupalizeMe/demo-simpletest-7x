@@ -2,5 +2,7 @@ name = Hello World
 description = An example module to demonstrate using SimpleTest
 core = 7.x
 
+testing_api = 2.x
+
 files[] = tests/helloworld.test
 files[] = tests/helloworld.unit.test
