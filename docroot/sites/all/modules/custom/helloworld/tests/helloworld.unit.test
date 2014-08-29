@@ -1,0 +1,49 @@
+<?php
+/**
+ * @file
+ * Unit tests for hello world module.
+ */
+
+class HelloworldUnitTestCase extends DrupalUnitTestCase {
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Hello World Unit Tests',
+      'description' => "Unit tests for the Hello World module's time conversion function.",
+      'group' => 'Hello World Group',
+    );
+  }
+
+  public function testTimeConversion() {
+    // Less than 60 seconds.
+    $time_string = helloworld_sec2hms(42);
+    $this->assertEqual($time_string, '42 seconds', 'Returned 42 seconds');
+
+    // One minute.
+    $time_string = helloworld_sec2hms(60);
+    $this->assertEqual($time_string, '1 minute', 'Returned 1 minute');
+
+    // One minute, abbreviated.
+    $time_string = helloworld_sec2hms(60, FALSE, TRUE);
+    $this->assertEqual($time_string, '1m', 'Returned 1m');
+
+    // One minute, array format.
+    $time_string = helloworld_sec2hms(60, TRUE);
+    $this->assertEqual($time_string['mins'], '1 minute', 'Returned 1 minute in array format.');
+
+    // 3742 seconds = 1 hour 2 minutes 22 seconds.
+    $time_string = helloworld_sec2hms(3742);
+    $this->assertEqual($time_string, '1 hour 2 minutes 22 seconds', 'Returned 1 hour 2 minutes 22 seconds.');
+    $time_string = helloworld_sec2hms(3742, FALSE, TRUE);
+    $this->assertEqual($time_string, '1h2m22s', 'Returned 1h2m22s.');
+
+    // Float.
+    $time_string = helloworld_sec2hms(3.14159);
+    $this->assertFalse($time_string, 'Float value does not work.');
+
+    // String.
+    $time_string = helloworld_sec2hms('asdf');
+    $this->assertFalse($time_string, 'String value does not work.');
+  }
+
+}

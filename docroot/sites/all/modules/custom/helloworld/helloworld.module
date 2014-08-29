@@ -36,3 +36,54 @@ function helloworld_menu() {
 function helloworld_hello_page() {
   return t('Hello World. Welcome to Drupal.');
 }
+
+/**
+ * Convert seconds to a string with hours, minutes and seconds represented.
+ *
+ * @param int $seconds
+ *   Number of seconds representing length of time to convert..
+ * @param bool $return_array
+ *   Return results as an associative array with key for hours, mins, and secs.
+ *   Or, return a formatted string (default).
+ * @param bool $abbreviation
+ *   Use abbreviations for hours (h), minutes (m) and seconds (s).
+ *
+ * @return string
+ *   A string like 1 hour 2 minutes 3 seconds.
+ */
+function helloworld_sec2hms($seconds, $return_array = FALSE, $abbreviation = FALSE) {
+  $totals = array();
+  $units = array('hours' => 3600, 'mins' => 60, 'secs' => 1);
+
+  if (!is_int($seconds)) {
+    return FALSE;
+  }
+
+  foreach ($units as $key => $value) {
+    if ($seconds >= $value) {
+      $totals[$key]= floor($seconds / $value);
+      $seconds %= $value;
+    }
+  }
+
+  if ($return_array) {
+    return $totals;
+  }
+
+  // Start with a blank string.
+  $hms = '';
+  // Add hours to $hms.
+  if (isset($totals['hours'])) {
+    $hms .= ($totals['hours'] > 0 ? $totals['hours'] . ($abbreviation ? 'h' : format_plural($totals['hours'], ' hour ', ' hours ')) : '');
+  }
+  // Add minutes to $hms.
+  if (isset($totals['mins'])) {
+    $hms .= ($totals['mins'] > 0 ? $totals['mins'] . ($abbreviation ? 'm' : format_plural($totals['mins'], ' minute ', ' minutes ')) : '');
+  }
+  // Add seconds to $hms (with a leading 0 if needed).
+  if (isset($totals['secs'])) {
+    $hms .= $totals['secs'] . ($abbreviation ? 's' : format_plural($totals['secs'], ' second', ' seconds'));
+  }
+
+  return trim($hms);
+}
